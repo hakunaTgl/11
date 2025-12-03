@@ -49,6 +49,8 @@ def load_model(
 
     torch_dtype = dtype
     if dtype and dtype != "auto":
+        if not hasattr(torch, dtype):
+            raise ValueError(f"Unknown torch dtype: {dtype}. Expected one of: float16, bfloat16, float32, etc.")
         torch_dtype = getattr(torch, dtype)
 
     model = AutoModelForCausalLM.from_pretrained(
