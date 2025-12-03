@@ -14,7 +14,7 @@ A lightweight command-line agent for experimenting with local transformer models
    ```bash
    python -m venv .venv
    source .venv/bin/activate
-   pip install torch transformers
+   pip install -r requirements.txt
    ```
 
 2. Download or reference a model (local directory or Hugging Face ID). Example using a GGUF-converted model is not supported directly by transformers; prefer a standard transformers checkpoint such as a LLaMA or Mistral variant.

@@ -2,10 +2,17 @@
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
 from typing import List, Optional
 
 import torch
-from transformers import GenerationConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+
+# Allow running as script from src directory or as module
+_src_dir = Path(__file__).parent
+if str(_src_dir) not in sys.path:
+    sys.path.insert(0, str(_src_dir))
 
 from tokenizer import load_tokenizer
 from utils import load_model, resolve_device
@@ -32,23 +39,27 @@ def build_prompt(
 
 
 def generate_response(
-    model,
-    tokenizer,
+    model: AutoModelForCausalLM,
+    tokenizer: AutoTokenizer,
     prompt: str,
-    device: torch.device,
+    device: Optional[torch.device],
     *,
     max_new_tokens: int,
     temperature: float,
     top_p: float,
     top_k: int,
 ) -> str:
-    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    inputs = tokenizer(prompt, return_tensors="pt")
+    # Only move to device if device is specified (not using device_map)
+    if device is not None:
+        inputs = inputs.to(device)
+    do_sample = temperature > 0
     generation_config = GenerationConfig(
         max_new_tokens=max_new_tokens,
         temperature=temperature,
         top_p=top_p,
         top_k=top_k,
-        do_sample=True,
+        do_sample=do_sample,
         repetition_penalty=1.05,
         pad_token_id=tokenizer.eos_token_id,
     )
@@ -60,7 +71,7 @@ def generate_response(
     return full_text[len(prompt) :].strip() if full_text.startswith(prompt) else full_text
 
 
-def interactive_chat(args, model, tokenizer, device: torch.device):
+def interactive_chat(args, model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: Optional[torch.device]):
     history: List[dict] = []
     print("Welcome to the local AI agent. Type /exit or /quit to leave.")
 
@@ -115,7 +126,11 @@ def parse_args():
 def main():
     args = parse_args()
 
-    target_device = torch.device(args.device) if args.device else resolve_device()
+    # When device_map is used, let transformers handle device placement
+    if args.device_map:
+        target_device = None
+    else:
+        target_device = torch.device(args.device) if args.device else resolve_device()
     tokenizer = load_tokenizer(args.model_path, trust_remote_code=args.trust_remote_code)
     model = load_model(
         args.model_path,

@@ -2,7 +2,7 @@
 from transformers import AutoTokenizer
 
 
-def load_tokenizer(model_path: str, trust_remote_code: bool = False):
+def load_tokenizer(model_path: str, trust_remote_code: bool = False) -> AutoTokenizer:
     """Load a tokenizer for the provided model path."""
 
     return AutoTokenizer.from_pretrained(
