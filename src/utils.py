@@ -31,7 +31,7 @@ def load_model(
     dtype: Optional[str] = "auto",
     trust_remote_code: bool = False,
     device_map: Optional[str] = None,
-):
+) -> AutoModelForCausalLM:
     """Load a CausalLM model and place it on the target device.
 
     Args:
