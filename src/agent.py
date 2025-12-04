@@ -122,7 +122,12 @@ def parse_args():
         default=0.7,
         help="Sampling temperature (must be non-negative)."
     )
-    parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling value.")
+    parser.add_argument(
+        "--top-p",
+        type=lambda x: float(x) if 0.0 <= float(x) <= 1.0 else parser.error("top-p must be between 0 and 1"),
+        default=0.9,
+        help="Top-p nucleus sampling value (must be between 0 and 1)."
+    )
     parser.add_argument("--top-k", type=int, default=50, help="Top-k sampling value.")
     parser.add_argument("--no-history", action="store_true", help="Disable dialogue history in the prompt.")
     parser.add_argument(
