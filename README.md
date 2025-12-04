@@ -36,8 +36,9 @@ Key flags:
 - `--dtype` – precision hint (`float16`, `bfloat16`, `auto`)
 - `--device-map auto` – let transformers shard across available hardware
 - `--no-history` – disable conversation history in prompts
-- `--trust-remote-code` – allow custom model/tokenizer code if required
+
 
 ## Notes
 - Large models may require `--device-map auto` or quantized checkpoints to fit on your hardware.
 - Ensure `pad_token_id` and `eos_token_id` are set on your tokenizer if the model defines custom tokens.
+- **Security warning:** The `--trust-remote-code` flag allows execution of arbitrary Python code from remote model repositories. Only use this flag with audited, trusted sources. Enabling it can run malicious code if the model repo is compromised. By default, leave this flag off and prefer official or verified model repositories.
