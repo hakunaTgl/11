@@ -116,7 +116,12 @@ def parse_args():
         default=256,
         help="Maximum new tokens to generate (must be positive)."
     )
-    parser.add_argument("--temperature", type=float, default=0.7, help="Sampling temperature.")
+    parser.add_argument(
+        "--temperature",
+        type=lambda x: float(x) if float(x) >= 0 else argparse.ArgumentTypeError("Temperature must be non-negative"),
+        default=0.7,
+        help="Sampling temperature (must be non-negative)."
+    )
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling value.")
     parser.add_argument("--top-k", type=int, default=50, help="Top-k sampling value.")
     parser.add_argument("--no-history", action="store_true", help="Disable dialogue history in the prompt.")
