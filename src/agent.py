@@ -68,7 +68,7 @@ def generate_response(
         outputs = model.generate(**inputs, generation_config=generation_config)
 
     full_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return full_text[len(prompt) :].strip() if full_text.startswith(prompt) else full_text
+    return full_text[len(prompt):].strip() if full_text.startswith(prompt) else full_text
 
 
 def interactive_chat(args, model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: Optional[torch.device]):
