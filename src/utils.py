@@ -49,8 +49,14 @@ def load_model(
 
     torch_dtype = dtype
     if dtype and dtype != "auto":
-        torch_dtype = getattr(torch, dtype)
-
+        # Collect valid torch dtype names
+        valid_dtypes = [name for name in dir(torch) if isinstance(getattr(torch, name), torch.dtype)]
+        try:
+            torch_dtype = getattr(torch, dtype)
+        except AttributeError:
+            raise ValueError(
+                f"Invalid dtype '{dtype}'. Valid options are: {', '.join(valid_dtypes)}"
+            )
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         torch_dtype=torch_dtype,
