@@ -110,7 +110,12 @@ def parse_args():
     parser.add_argument("--device", default=None, help="Force a device (e.g. cpu, cuda, mps).")
     parser.add_argument("--dtype", default="auto", help="Torch dtype name (float16, bfloat16, auto).")
     parser.add_argument("--device-map", default=None, help="Pass 'auto' to let transformers shard the model across devices.")
-    parser.add_argument("--max-new-tokens", type=int, default=256, help="Maximum new tokens to generate.")
+    parser.add_argument(
+        "--max-new-tokens",
+        type=lambda x: int(x) if int(x) > 0 else parser.error("max-new-tokens must be positive"),
+        default=256,
+        help="Maximum new tokens to generate (must be positive)."
+    )
     parser.add_argument("--temperature", type=float, default=0.7, help="Sampling temperature.")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling value.")
     parser.add_argument("--top-k", type=int, default=50, help="Top-k sampling value.")
