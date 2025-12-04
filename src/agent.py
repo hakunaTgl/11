@@ -54,11 +54,15 @@ def generate_response(
     if device is not None:
         inputs = inputs.to(device)
     do_sample = temperature > 0
+    # If not sampling, set temperature/top_p/top_k to None to avoid confusion
+    gen_temperature = temperature if do_sample else None
+    gen_top_p = top_p if do_sample else None
+    gen_top_k = top_k if do_sample else None
     generation_config = GenerationConfig(
         max_new_tokens=max_new_tokens,
-        temperature=temperature,
-        top_p=top_p,
-        top_k=top_k,
+        temperature=gen_temperature,
+        top_p=gen_top_p,
+        top_k=gen_top_k,
         do_sample=do_sample,
         repetition_penalty=1.05,
         pad_token_id=tokenizer.eos_token_id,
