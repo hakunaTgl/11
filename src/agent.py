@@ -14,8 +14,8 @@ _src_dir = Path(__file__).parent
 if str(_src_dir) not in sys.path:
     sys.path.insert(0, str(_src_dir))
 
-from tokenizer import load_tokenizer
-from utils import load_model, resolve_device
+from .tokenizer import load_tokenizer
+from .utils import load_model, resolve_device
 
 
 def build_prompt(
